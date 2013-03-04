@@ -1,6 +1,6 @@
 package pro.homiecraft;
 
-import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -15,53 +15,20 @@ import org.bukkit.entity.Player;
 
 public class Commands implements CommandExecutor {
 	
-	public static String getHash(String str) {
-	    MessageDigest digest = null;
-	    byte[] input = null;
-
-	    try {
-	      digest = MessageDigest.getInstance("SHA-1");
-	      digest.reset();
-	      input = digest.digest(str.getBytes("UTF-8"));
-
-	    } catch (NoSuchAlgorithmException e1) {
-	      e1.printStackTrace();
-	    } catch (UnsupportedEncodingException e) {
-	      e.printStackTrace();
-	    }
-	    return convertToHex(input);
-	  }
-	  
-	  public static String getHash(byte[] data) {
-	    MessageDigest digest = null;
-	    byte[] input = null;
-
-	    try {
-	      digest = MessageDigest.getInstance("SHA-1");
-	      digest.reset();
-	      input = digest.digest(data);
-
-	    } catch (NoSuchAlgorithmException e1) {
-	      e1.printStackTrace();
-	    }
-	    return convertToHex(input);
-	  }
-	  
-	    private static String convertToHex(byte[] data) { 
-	        StringBuffer buf = new StringBuffer();
-	        for (int i = 0; i < data.length; i++) { 
-	            int halfbyte = (data[i] >>> 4) & 0x0F;
-	            int two_halfs = 0;
-	            do { 
-	                if ((0 <= halfbyte) && (halfbyte <= 9)) 
-	                    buf.append((char) ('0' + halfbyte));
-	                else 
-	                    buf.append((char) ('a' + (halfbyte - 10)));
-	                halfbyte = data[i] & 0x0F;
-	            } while(two_halfs++ < 1);
-	        } 
-	        return buf.toString();
-	    } 
+	public static String encrypt(String x,String encryption) throws Exception { 
+		java.security.MessageDigest d = null; 
+		d = java.security.MessageDigest.getInstance(encryption); 
+		d.reset(); 
+		d.update(x.getBytes()); 
+		String result=""; 
+		byte by[]=d.digest(); 
+		for (int i=0; i < by.length;i++) { 
+		result += 
+		Integer.toString( ( by[i] & 0xff ), 16); 
+		//System.out.println((char)by[i]); 
+		} 
+		return result; 
+		} 
 
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args){
@@ -91,10 +58,19 @@ public class Commands implements CommandExecutor {
 								String UserName = args[1];
 								String Pw = args[2];
 								String EMail = args[3];
+								
+								String sha1Pw = null;
+								
+								try {
+									  MessageDigest md = MessageDigest.getInstance("SHA-1");
+									  md.update(Pw.getBytes());
+									         BigInteger hash = new BigInteger(1, md.digest());
+									         sha1Pw = hash.toString(16);                 
+									         } catch (NoSuchAlgorithmException e) { 
+									   e.printStackTrace();
+									  }
 										
-								//String sha1Pw = getHash(Pw);
-										
-								String query = "INSERT INTO users (minecraft, username, password, email) VALUE('" + pName + "', '" + UserName + "', '" + Pw + "', '" + EMail + "')";
+								String query = "INSERT INTO users (minecraft, username, password, email) VALUE('" + pName + "', '" + UserName + "', '" + sha1Pw + "', '" + EMail + "')";
 										
 								statement.executeUpdate(query);
 								player.sendMessage("[HomieCraft] You have now registered as: " + UserName + " Password: " + Pw + " Email: " + EMail);
@@ -114,6 +90,9 @@ public class Commands implements CommandExecutor {
 					player.sendMessage("/homiecraft register <UserName> <Password> <email>");
 				}
 			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

@@ -1,0 +1,8 @@
+HomieCraft:
+  mysql:
+    settings:
+      host: ip/hostname
+      db: realEstate
+      user: user
+      pw: pw
+      port: 3306

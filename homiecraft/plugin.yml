@@ -1,0 +1,9 @@
+name: HomieCraft
+main: pro.homiecraft.Homiecraft
+version: 1.0
+author: GudfareN
+website: homiecraft.pro
+
+commands:
+   Homiecraft:
+      description: Homiecraft

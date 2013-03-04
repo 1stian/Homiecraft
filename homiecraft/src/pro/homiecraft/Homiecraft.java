@@ -51,6 +51,6 @@ public class Homiecraft extends JavaPlugin{
 		sqlDb = this.getConfig().getString("HomieCraft.mysql.settings.db");
 		sqlUser = this.getConfig().getString("HomieCraft.mysql.settings.user");
 		sqlPw = this.getConfig().getString("HomieCraft.mysql.settings.pw");
-		c = MySql.open();
+		//c = MySql.open();
 	}
 }

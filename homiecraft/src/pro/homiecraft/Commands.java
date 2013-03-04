@@ -3,7 +3,6 @@ package pro.homiecraft;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -13,31 +12,11 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class Commands implements CommandExecutor {
-	
-	public static String encrypt(String x,String encryption) throws Exception { 
-		java.security.MessageDigest d = null; 
-		d = java.security.MessageDigest.getInstance(encryption); 
-		d.reset(); 
-		d.update(x.getBytes()); 
-		String result=""; 
-		byte by[]=d.digest(); 
-		for (int i=0; i < by.length;i++) { 
-		result += 
-		Integer.toString( ( by[i] & 0xff ), 16); 
-		//System.out.println((char)by[i]); 
-		} 
-		return result; 
-		} 
-
-	
+public class Commands implements CommandExecutor {	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args){
 		if(cmd.getName().equalsIgnoreCase("homiecraft")){
 			Player player = (Player) sender;
-			String pName = player.getName();
-			
-			Connection c = null;
-			
+			String pName = player.getName();			
 			
 			try {
 				String sqlHost = Homiecraft.pluginST.getConfig().getString("HomieCraft.mysql.settings.host");

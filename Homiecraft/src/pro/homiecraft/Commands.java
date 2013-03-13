@@ -27,38 +27,38 @@ public class Commands implements CommandExecutor {
 				
 				if(!(args.length == 0)){
 					if(args[0].equalsIgnoreCase("register")){
-						pro.homiecraft.MySql MySql = new pro.homiecraft.MySql(sqlHost, sqlPort, sqlDb, sqlUser, sqlPw);
-						Statement statement = MySql.open().createStatement();
-						ResultSet res = statement.executeQuery("SELECT * FROM users WHERE minecraft = '" + pName + "';");
-						res.next();
-						
-						if(res.getRow() == 0){
-							if (!(args[1].length() == 0) && !(args[2].length() == 0) && !(args[3].length() == 0)){
-								String UserName = args[1];
-								String Pw = args[2];
-								String EMail = args[3];
-								
-								String sha1Pw = null;
-								
-								try {
-									  MessageDigest md = MessageDigest.getInstance("SHA-1");
-									  md.update(Pw.getBytes());
-									         BigInteger hash = new BigInteger(1, md.digest());
-									         sha1Pw = hash.toString(16);                 
-									         } catch (NoSuchAlgorithmException e) { 
-									   e.printStackTrace();
-									  }
-										
-								String query = "INSERT INTO users (minecraft, username, password, email) VALUE('" + pName + "', '" + UserName + "', '" + sha1Pw + "', '" + EMail + "')";
-										
-								statement.executeUpdate(query);
-								player.sendMessage("[HomieCraft] You have now registered as: " + UserName + " Password: " + Pw + " Email: " + EMail);
+						if(args.length == 4){
+							pro.homiecraft.MySql MySql = new pro.homiecraft.MySql(sqlHost, sqlPort, sqlDb, sqlUser, sqlPw);
+							Statement statement = MySql.open().createStatement();
+							ResultSet res = statement.executeQuery("SELECT * FROM users WHERE minecraft = '" + pName + "';");
+							res.next();
+							
+							if(res.getRow() == 0){
+									String UserName = args[1];
+									String Pw = args[2];
+									String EMail = args[3];
+									
+									String sha1Pw = null;
+									
+									try {
+										  MessageDigest md = MessageDigest.getInstance("SHA-1");
+										  md.update(Pw.getBytes());
+										         BigInteger hash = new BigInteger(1, md.digest());
+										         sha1Pw = hash.toString(16);                 
+										         } catch (NoSuchAlgorithmException e) { 
+										   e.printStackTrace();
+										  }
+											
+									String query = "INSERT INTO users (minecraft, username, password, email) VALUE('" + pName + "', '" + UserName + "', '" + sha1Pw + "', '" + EMail + "')";
+											
+									statement.executeUpdate(query);
+									player.sendMessage("[HomieCraft] You have now registered as: " + UserName + " Password: " + Pw + " Email: " + EMail);
 							}else{
-								player.sendMessage("[HomieCraft] Usage:");
-								player.sendMessage("/homiecraft register <UserName> <Password> <email>");
+								player.sendMessage("[HomieCraft] You have allready registered! You can login at http://homiecraft.pro");
 							}
 						}else{
-							player.sendMessage("[HomieCraft] You have allready registered! You can login at http://homiecraft.pro");
+							player.sendMessage("[HomieCraft] Usage:");
+							player.sendMessage("/homiecraft register <UserName> <Password> <email>");
 						}
 					}else{
 						player.sendMessage("[HomieCraft] Usage:");

@@ -6,3 +6,12 @@ HomieCraft:
       user: user
       pw: pw
       port: 3306
+  settings:
+    start-delay: 1200
+    repeat: 3600
+  reward:
+    items:
+      - item1, 1
+      - item2, 1
+    Worlds-Not-To-Give-Rewards-In:
+      - creative

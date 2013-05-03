@@ -1,8 +1,13 @@
 package pro.homiecraft;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Homiecraft extends JavaPlugin{
@@ -22,15 +27,24 @@ public class Homiecraft extends JavaPlugin{
 	public void onDisable(){
 		
 	}
-	
+
+    @Override
 	public void onEnable(){
 		pluginST = this;
+        plugin = this;
 		
 		getCommands();
 		loadConfiguration();
 		setupMySql();
+        loadingAllItNeeds();
+
+        Long startDelay = this.getConfig().getLong("HomieCraft.settings.start-delay");
+        Long repeatAfter = this.getConfig().getLong("HomieCraft.settings.repeat");
+
+        getServer().getScheduler().scheduleSyncRepeatingTask(this.plugin, new PlayerListener(this), startDelay, repeatAfter);
+
 	}
-	
+
 	public void getCommands(){
 		this.getCommand("homiecraft").setExecutor(new Commands());
 	}
@@ -53,4 +67,29 @@ public class Homiecraft extends JavaPlugin{
 		sqlPw = this.getConfig().getString("HomieCraft.mysql.settings.pw");
 		//c = MySql.open();
 	}
+
+    public void loadingAllItNeeds(){
+        ArrayList<String> rewards = (ArrayList<String>) this.getConfig().getList("HomieCraft.reward.items");
+
+        for(String items : rewards){
+            PlayerListener.rewards.add(items);
+        }
+
+        ArrayList<String> ifWorlds = (ArrayList<String>) this.getConfig().getList("HomieCraft.reward.Worlds-Not-To-Give-Rewards-In");
+
+        for (String cWorld : ifWorlds){
+            PlayerListener.ifWorld.add(cWorld);
+        }
+
+        for (String items : rewards){
+            String[] split = items.split(",");
+            String item = split[0].trim();
+            String amount = split[1].trim();
+
+            ItemStack is = new ItemStack(Material.getMaterial(item));
+
+            PlayerListener.itemReward.put(is, Integer.parseInt(amount));
+            PlayerListener.ItemStackList.add(item);
+        }
+    }
 }

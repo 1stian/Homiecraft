@@ -1,14 +1,22 @@
 package pro.homiecraft;
 
+import java.net.PasswordAuthentication;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
 
 public class Homiecraft extends JavaPlugin{
 	public static Homiecraft pluginST;
@@ -71,10 +79,6 @@ public class Homiecraft extends JavaPlugin{
     public void loadingAllItNeeds(){
         ArrayList<String> rewards = (ArrayList<String>) this.getConfig().getList("HomieCraft.reward.items");
 
-        for(String items : rewards){
-            PlayerListener.rewards.add(items);
-        }
-
         ArrayList<String> ifWorlds = (ArrayList<String>) this.getConfig().getList("HomieCraft.reward.Worlds-Not-To-Give-Rewards-In");
 
         for (String cWorld : ifWorlds){
@@ -91,5 +95,25 @@ public class Homiecraft extends JavaPlugin{
             PlayerListener.itemReward.put(is, Integer.parseInt(amount));
             PlayerListener.ItemStackList.add(item);
         }
+    }
+
+    public void email(String email, String pw){
+        Properties props = new Properties();
+        String from = "admin@homiecraft.pro";
+        String host = "localhost";
+        Properties properties = System.getProperties();
+        properties.setProperty("mail.smtp.host", host);
+        Session session = Session.getDefaultInstance(props);
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(from));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+            message.setSubject("Password for HomieCraft");
+            message.setText("Here is your loing password for HomieCraft.pro: " + pw);
+            Transport.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

@@ -19,7 +19,6 @@ import java.util.HashMap;
  */
 public class PlayerListener implements Runnable {
 
-    static ArrayList<String> rewards = new ArrayList<String>();
     static ArrayList<String> ItemStackList = new ArrayList<String>();
     static ArrayList<String> ifWorld = new ArrayList<String>();
     static HashMap<ItemStack, Integer> itemReward = new HashMap<ItemStack, Integer>();
@@ -52,12 +51,13 @@ public class PlayerListener implements Runnable {
                     if (res.getInt("reward") == 0){
                         Inventory pi = player.getEnderChest();
 
-                        int rewardCount = rewards.size();
+                        int rewardCount = ItemStackList.size();
 
                         for(String is : ItemStackList){
                             ItemStack sIS = new ItemStack(Material.getMaterial(is));
                             if(pi.contains(sIS)){
                                 if(!(pi.contains(sIS, 64))){
+
                                     int amount = itemReward.get(sIS);
                                     pi.addItem(new ItemStack(Material.getMaterial(is), amount));
 
@@ -85,7 +85,7 @@ public class PlayerListener implements Runnable {
                                     }
 
                                 }else{
-                                    player.sendMessage("You're registerd at HomieCraft. But your EnderChest does not have any slots free");
+                                    player.sendMessage("You're registered at HomieCraft. But your EnderChest does not have any slots free");
                                     player.sendMessage("Clear some slots(" + rewardCount + " slots) to retrieve your reward in the next check(3min)!");
                                     break;
                                 }
@@ -104,7 +104,7 @@ public class PlayerListener implements Runnable {
                                     ee.printStackTrace();
                                 }
                             }else{
-                                player.sendMessage("You're registerd at HomieCraft. But your EnderChest does not have any slots free");
+                                player.sendMessage("You're registered at HomieCraft. But your EnderChest does not have any slots free");
                                 player.sendMessage("Clear some slots(" + rewardCount + " slots) to retrieve your reward in the next check(3min)!");
                                 break;
                             }

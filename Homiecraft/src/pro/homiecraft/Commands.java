@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Random;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,22 +28,34 @@ public class Commands implements CommandExecutor {
 			try {				
 				if(!(args.length == 0)){
 					if(args[0].equalsIgnoreCase("register")){
-						if(args.length == 4){
+						if(args.length == 3){
 							pro.homiecraft.MySql MySql = new pro.homiecraft.MySql(sqlHost, sqlPort, sqlDb, sqlUser, sqlPw);
 							Statement statement = MySql.open().createStatement();
 							ResultSet res = statement.executeQuery("SELECT * FROM users WHERE minecraft = '" + pName + "';");
 							res.next();
 							
 							if(res.getRow() == 0){
-									String UserName = args[1];
-									String Pw = args[2];
-									String EMail = args[3];
+
+                                final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                                Random rnd = new Random();
+
+                                int len = 7;
+
+                                StringBuilder sb = new StringBuilder( len );
+                                for( int i = 0; i < len; i++ ){
+                                    sb.append( AB.charAt( rnd.nextInt(AB.length()) ) );
+                                }
+
+                                String randomPW = sb.toString();
+
+                                    String UserName = args[1];
+									String EMail = args[2];
 									
 									String sha1Pw = null;
 									
 									try {
 										  MessageDigest md = MessageDigest.getInstance("SHA-1");
-										  md.update(Pw.getBytes());
+										  md.update(randomPW.getBytes());
 										         BigInteger hash = new BigInteger(1, md.digest());
 										         sha1Pw = hash.toString(16);                 
 										         } catch (NoSuchAlgorithmException e) { 
@@ -53,26 +66,27 @@ public class Commands implements CommandExecutor {
 
                                     try {
                                         statement.executeUpdate(query);
+                                        Homiecraft.pluginST.email(EMail, randomPW);
                                     } catch (SQLException e) {
                                         // TODO Auto-generated catch block
                                         e.printStackTrace();
                                     }
 
-									player.sendMessage("[HomieCraft] You have now registered as: " + UserName + " Password: " + Pw + " Email: " + EMail);
+									player.sendMessage("[HomieCraft] You have now registered as: " + UserName + " Email: " + EMail + " - Your password has been sent to you by email!");
 							}else{
 								player.sendMessage("[HomieCraft] You have already registered! You can login at http://homiecraft.pro");
 							}
 						}else{
 							player.sendMessage("[HomieCraft] Usage:");
-							player.sendMessage("/homiecraft register <UserName> <Password> <email>");
+							player.sendMessage("/homiecraft register <UserName> <email>");
 						}
 					}else{
 						player.sendMessage("[HomieCraft] Usage:");
-						player.sendMessage("/homiecraft register <UserName> <Password> <email>");
+						player.sendMessage("/homiecraft register <UserName> <email>");
 					}
 				}else{
 					player.sendMessage("[HomieCraft] Usage:");
-					player.sendMessage("/homiecraft register <UserName> <Password> <email>");
+					player.sendMessage("/homiecraft register <UserName> <email>");
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block

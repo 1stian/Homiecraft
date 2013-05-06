@@ -37,6 +37,7 @@ public class PlayerListener implements Runnable {
          for (Player player : Homiecraft.pluginST.getServer().getOnlinePlayers()){
             try{
                 String pName = player.getName();
+                Inventory pi = player.getEnderChest();
 
                 pro.homiecraft.MySql MySql = new pro.homiecraft.MySql(sqlHost, sqlPort, sqlDb, sqlUser, sqlPw);
                 Connection c = null;
@@ -49,7 +50,6 @@ public class PlayerListener implements Runnable {
                     player.sendMessage("You're not registered at HomieCraft... No Reward for you! :D");
                 }else{
                     if (res.getInt("reward") == 0){
-                        Inventory pi = player.getEnderChest();
 
                         int rewardCount = ItemStackList.size();
 
@@ -57,52 +57,17 @@ public class PlayerListener implements Runnable {
                             ItemStack sIS = new ItemStack(Material.getMaterial(is));
                             if(pi.contains(sIS)){
                                 if(!(pi.contains(sIS, 64))){
-
-                                    int amount = itemReward.get(sIS);
-                                    pi.addItem(new ItemStack(Material.getMaterial(is), amount));
-
-                                    String query = "UPDATE users SET reward='1' WHERE `minecraft` = '" + pName + "';";
-                                    player.sendMessage("pi.contains");
-                                    try {
-                                        statement.executeUpdate(query);
-                                    } catch (SQLException ee) {
-                                        // TODO Auto-generated catch block
-                                        ee.printStackTrace();
-                                    }
+                                    addItem(sIS, is, player.getName(), player.getEnderChest());
 
                                 }else if(!(pi.firstEmpty() == -1)){
-                                    int amount = itemReward.get(sIS);
-                                    pi.addItem(new ItemStack(Material.getMaterial(is), amount));
-
-                                    String query = "UPDATE users SET reward='1' WHERE `minecraft` = '" + pName + "';";
-
-                                    player.sendMessage("pi.contains else pi.firstempty");
-                                    try {
-                                        statement.executeUpdate(query);
-                                    } catch (SQLException ee) {
-                                        // TODO Auto-generated catch block
-                                        ee.printStackTrace();
-                                    }
-
+                                    addItem(sIS, is, player.getName(), player.getEnderChest());
                                 }else{
                                     player.sendMessage("You're registered at HomieCraft. But your EnderChest does not have any slots free");
                                     player.sendMessage("Clear some slots(" + rewardCount + " slots) to retrieve your reward in the next check(3min)!");
                                     break;
                                 }
                             }else if(!(pi.firstEmpty() == -1)){
-                                int amount = itemReward.get(sIS);
-                                pi.addItem(new ItemStack(Material.getMaterial(is), amount));
-
-                                String query = "UPDATE users SET reward='1' WHERE `minecraft` = '" + pName + "';";
-
-                                player.sendMessage("pi.firstEmpty");
-
-                                try {
-                                    statement.executeUpdate(query);
-                                } catch (SQLException ee) {
-                                    // TODO Auto-generated catch block
-                                    ee.printStackTrace();
-                                }
+                                addItem(sIS, is, player.getName(), player.getEnderChest());
                             }else{
                                 player.sendMessage("You're registered at HomieCraft. But your EnderChest does not have any slots free");
                                 player.sendMessage("Clear some slots(" + rewardCount + " slots) to retrieve your reward in the next check(3min)!");
@@ -118,6 +83,36 @@ public class PlayerListener implements Runnable {
              }
         }
     }
+
+    public void addItem(ItemStack sIS, String is, String pName, Inventory pi){
+        int amount = itemReward.get(sIS);
+        pi.addItem(new ItemStack(Material.getMaterial(is), amount));
+
+        execQuery(pName);
+    }
+
+    public void execQuery(String pName){
+        try{
+            pro.homiecraft.MySql MySql = new pro.homiecraft.MySql(sqlHost, sqlPort, sqlDb, sqlUser, sqlPw);
+            Connection c = null;
+            c = MySql.open();
+            Statement statement = c.createStatement();
+            ResultSet res = statement.executeQuery("SELECT * FROM users WHERE minecraft = '" + pName + "';");
+            res.next();
+
+            String query = "UPDATE users SET reward='1' WHERE `minecraft` = '" + pName + "';";
+
+            try {
+                statement.executeUpdate(query);
+            } catch (SQLException ee) {
+                // TODO Auto-generated catch block
+                ee.printStackTrace();
+            }
+        }catch (SQLException myR){
+            myR.printStackTrace();
+        }
+    }
+
 
     public void sendTheMessage(String pName){
         try{

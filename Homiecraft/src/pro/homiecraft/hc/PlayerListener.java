@@ -1,9 +1,10 @@
-package pro.homiecraft;
+package pro.homiecraft.hc;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import pro.homiecraft.hc.Homiecraft;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -39,7 +40,7 @@ public class PlayerListener implements Runnable {
                 String pName = player.getName();
                 Inventory pi = player.getEnderChest();
 
-                pro.homiecraft.MySql MySql = new pro.homiecraft.MySql(sqlHost, sqlPort, sqlDb, sqlUser, sqlPw);
+                MySql MySql = new pro.homiecraft.hc.MySql(sqlHost, sqlPort, sqlDb, sqlUser, sqlPw);
                 Connection c = null;
                 c = MySql.open();
                 Statement statement = c.createStatement();
@@ -93,7 +94,7 @@ public class PlayerListener implements Runnable {
 
     public void execQuery(String pName){
         try{
-            pro.homiecraft.MySql MySql = new pro.homiecraft.MySql(sqlHost, sqlPort, sqlDb, sqlUser, sqlPw);
+            MySql MySql = new pro.homiecraft.hc.MySql(sqlHost, sqlPort, sqlDb, sqlUser, sqlPw);
             Connection c = null;
             c = MySql.open();
             Statement statement = c.createStatement();
@@ -116,7 +117,7 @@ public class PlayerListener implements Runnable {
 
     public void sendTheMessage(String pName){
         try{
-            pro.homiecraft.MySql MySql = new pro.homiecraft.MySql(sqlHost, sqlPort, sqlDb, sqlUser, sqlPw);
+            MySql MySql = new pro.homiecraft.hc.MySql(sqlHost, sqlPort, sqlDb, sqlUser, sqlPw);
             Connection c = null;
             c = MySql.open();
             Statement statement = c.createStatement();

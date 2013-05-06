@@ -1,5 +1,5 @@
 name: HomieCraft
-main: pro.homiecraft.Homiecraft
+main: pro.homiecraft.hc.Homiecraft
 version: 1.0
 author: GudfareN
 website: homiecraft.pro
